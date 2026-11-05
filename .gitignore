@@ -1,0 +1,45 @@
+# API keys and secret keys
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+
+# SQLite database
+instance/
+*.db
+*.sqlite3
+papergraph.db
+
+# Uploaded PDF files
+uploads/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Testing and code coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Log files
+*.log
+
+# Research paper PDFs
+papers/
+papers/

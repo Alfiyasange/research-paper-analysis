@@ -1,0 +1,427 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Paper Graph Assistant | Research Workspace</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <a class="brand" href="/">
+      <span class="brand-mark">P</span>
+      <span>
+        <strong>PaperGraph</strong>
+        <small>RESEARCH STUDIO</small>
+      </span>
+    </a>
+
+    <div class="side-label">WORKSPACE</div>
+
+    <ul class="nav flex-column side-nav" role="tablist">
+      <li>
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#t-papers" type="button">
+          <span class="nav-icon">▤</span> Research library
+        </button>
+      </li>
+      <li>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-chat" type="button">
+          <span class="nav-icon">✳</span> AI assistant
+        </button>
+      </li>
+      <li>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-graph" id="graphTab" type="button">
+          <span class="nav-icon">⌘</span> Knowledge graph
+        </button>
+      </li>
+      <li>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-compare" type="button">
+          <span class="nav-icon">⇄</span> Compare papers
+        </button>
+      </li>
+      <li>
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-history" type="button">
+    <span class="nav-icon">◷</span> History
+  </button>
+</li>
+    </ul>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-note">
+        <div class="note-icon">✦</div>
+        <strong>Your research, connected.</strong>
+        <p>Explore ideas, compare findings, and discover connections across your papers.</p>
+      </div>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>Research workspace</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+    <div>
+        <div class="eyebrow">YOUR KNOWLEDGE WORKSPACE</div>
+        <h1>Research Studio</h1>
+    </div>
+
+    <form id="upForm" class="upload-form">
+        <label class="upload-picker">
+            <span>＋</span>
+            <input type="file" name="files" accept=".pdf,application/pdf" multiple required>
+            <span class="picker-label">Choose PDF files</span>
+        </label>
+        <button class="btn btn-primary upload-button" type="submit">
+            Upload papers ↗
+        </button>
+    </form>
+
+    <div class="topbar-actions">
+        <button id="themeToggle" class="theme-toggle" type="button">
+            🌙 Dark Mode
+        </button>
+
+        <a href="/profile" class="profile-button">👤 Profile</a>
+    </div>
+</header>
+    <section class="welcome-strip">
+      <div>
+        <span class="welcome-kicker">WELCOME TO YOUR RESEARCH SPACE</span>
+        <h2>Turn research papers into <span>connected knowledge.</span></h2>
+        <p>Ask questions, uncover relationships, and understand the literature in one place.</p>
+      </div>
+      <div class="welcome-symbol" aria-hidden="true">
+        <span class="orbit orbit-one"></span>
+        <span class="orbit orbit-two"></span>
+        <span class="orbit-core">P</span>
+        <span class="orbit-node node-one"></span>
+        <span class="orbit-node node-two"></span>
+        <span class="orbit-node node-three"></span>
+      </div>
+    </section>
+
+    <div class="workspace-heading">
+      <div>
+        <h2>Workspace</h2>
+        <p>Choose a tool to continue your research.</p>
+      </div>
+      <span class="private-label"><span class="status-dot"></span> Your research tools</span>
+    </div>
+
+    <div class="tab-content workspace-content">
+
+    
+<!-- RESEARCH LIBRARY -->
+<section class="tab-pane fade show active" id="t-papers">
+  <div class="section-heading">
+    <div>
+      <h3>Research library</h3>
+      <p>Browse your indexed papers and generate summaries.</p>
+    </div>
+    <span class="section-symbol">01</span>
+  </div>
+
+  <div class="library-panel panel">
+    <div class="panel-heading">
+      <div>
+        <h4>Your papers</h4>
+        <p>Uploaded and indexed research documents</p>
+      </div>
+      <span class="soft-tag">PDF LIBRARY</span>
+    </div>
+
+    <div id="paperList" class="list-group paper-list">
+      <div class="empty-state">Loading your research library…</div>
+    </div>
+  </div>
+
+  <!-- Large summary area in the main workspace -->
+  <div class="panel summary-panel" id="summaryPanel">
+    <div class="panel-heading">
+      <div>
+        <h4 id="summaryTitle">Paper summary</h4>
+        <p id="summaryHint">
+          Select a paper and choose Summarize to view its key ideas.
+        </p>
+      </div>
+      <span class="summary-icon">✧</span>
+    </div>
+
+    <pre id="summary" class="out summary-output">Your generated summary will appear here.</pre>
+  </div>
+</section>
+
+      <!-- AI ASSISTANT -->
+      <section class="tab-pane fade" id="t-chat">
+        <div class="section-heading">
+          <div>
+            <h3>AI research assistant</h3>
+            <p>Ask questions grounded in your research collection.</p>
+          </div>
+          <span class="section-symbol">02</span>
+        </div>
+
+        <div class="panel assistant-panel">
+          <div class="assistant-top">
+            <div class="assistant-avatar">✳</div>
+            <div>
+              <h4>Research copilot</h4>
+              <p>Explore findings and retrieve relevant information.</p>
+            </div>
+            <span class="soft-tag ms-auto">AI ASSISTANT</span>
+          </div>
+
+          <div class="assistant-controls">
+            <label for="mode">Answer mode</label>
+            <select id="mode" class="form-select">
+              <option value="qa">Question and answer</option>
+              <option value="extract">Extract exact information</option>
+            </select>
+
+            <label for="scope">Research scope</label>
+            <select id="scope" class="form-select">
+              <option value="">All papers</option>
+            </select>
+          </div>
+
+          <div id="chat" class="out chat-window" aria-live="polite">
+            <div class="chat-welcome">
+              <div class="chat-welcome-icon">✳</div>
+              <h4>What would you like to discover?</h4>
+              <p>Ask about methods, datasets, findings, or relationships in your papers.</p>
+              <div class="suggestion-chips">
+                <span>Summarize key findings</span>
+                <span>Compare research methods</span>
+                <span>Identify datasets</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="question-composer">
+            <input id="q" class="form-control" placeholder="Ask a question about your research…" autocomplete="off">
+            <button id="send" class="btn btn-primary send-button" type="button">Ask ↗</button>
+          </div>
+          <p class="composer-note">Select a research scope above to focus your question on one paper.</p>
+        </div>
+      </section>
+
+<!-- KNOWLEDGE GRAPH -->
+<section class="tab-pane fade" id="t-graph">
+  <div class="section-heading">
+    <div>
+      <h3>Knowledge Graph</h3>
+      <p>Explore relationships between research papers and concepts.</p>
+    </div>
+    <span class="section-symbol">03</span>
+  </div>
+
+  <div class="panel graph-panel">
+    <div class="panel-heading graph-heading">
+      <div>
+        <h4>Research Connections</h4>
+        <p>Search, explore, and inspect your research network.</p>
+      </div>
+
+      <div class="graph-legend">
+        <span><i class="legend-dot paper-dot"></i> Papers</span>
+        <span><i class="legend-dot concept-dot"></i> Concepts</span>
+      </div>
+    </div>
+
+    <div class="graph-toolbar">
+      <input
+        type="search"
+        id="graphSearch"
+        class="form-control"
+        placeholder="Search papers or concepts..."
+        aria-label="Search graph nodes"
+      />
+
+      <button type="button" class="btn btn-outline-secondary" id="graphSearchBtn">
+        Search
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary" id="graphZoomIn">
+        + Zoom
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary" id="graphZoomOut">
+        − Zoom
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary" id="graphFit">
+        Fit graph
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary" id="graphReset">
+        Reset
+      </button>
+    </div>
+
+    <div class="graph-stats" aria-live="polite">
+      <div class="graph-stat">
+        <span>Nodes</span>
+        <strong id="graphNodeCount">0</strong>
+      </div>
+      <div class="graph-stat">
+        <span>Connections</span>
+        <strong id="graphEdgeCount">0</strong>
+      </div>
+      <div class="graph-stat">
+        <span>Papers</span>
+        <strong id="graphPaperCount">0</strong>
+      </div>
+      <div class="graph-stat">
+        <span>Concepts</span>
+        <strong id="graphConceptCount">0</strong>
+      </div>
+    </div>
+
+    <div class="graph-workspace">
+      <div id="cy" class="graph-canvas">
+        <div class="empty-state">Open this tab to load your knowledge graph.</div>
+      </div>
+
+      <aside class="graph-details" id="graphDetails">
+        <h5>Node Details</h5>
+        <p class="graph-detail-hint">
+          Select a node in the graph to inspect its details and connections.
+        </p>
+        <div id="graphNodeDetails" aria-live="polite">
+          <span class="graph-detail-empty">No node selected</span>
+        </div>
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+          id="graphClearSelection">
+          Clear selection
+        </button>
+      </aside>
+    </div>
+
+    <div class="graph-footer">
+      Select a paper node to set the assistant's research scope. Select any
+      node to highlight its direct connections.
+    </div>
+  </div>
+</section>
+
+
+      <!-- COMPARE PAPERS -->
+      <section class="tab-pane fade" id="t-compare">
+        <div class="section-heading">
+          <div>
+            <h3>Compare papers</h3>
+            <p>Understand similarities and differences between two studies.</p>
+          </div>
+          <span class="section-symbol">04</span>
+        </div>
+
+        <div class="panel compare-panel">
+          <div class="panel-heading">
+            <div>
+              <h4>Comparison setup</h4>
+              <p>Choose two different papers and an optional comparison aspect.</p>
+            </div>
+            <span class="soft-tag">SIDE BY SIDE</span>
+          </div>
+
+          <div class="compare-grid">
+            <div class="field-card">
+              <label for="pa">FIRST PAPER</label>
+              <select id="pa" class="form-select">
+                <option value="">Select first paper</option>
+              </select>
+            </div>
+            <div class="compare-divider">VS</div>
+            <div class="field-card">
+              <label for="pb">SECOND PAPER</label>
+              <select id="pb" class="form-select">
+                <option value="">Select second paper</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="compare-action-row">
+            <div class="aspect-field">
+              <label for="aspect">What would you like to compare?</label>
+              <input id="aspect" class="form-control" placeholder="e.g. methodology, datasets, findings">
+            </div>
+            <button id="cmp" class="btn btn-primary compare-button" type="button">Compare papers ↗</button>
+          </div>
+        </div>
+
+        <div class="panel result-panel">
+          <div class="panel-heading">
+            <div>
+              <h4>Comparison results</h4>
+              <p>Review the returned analysis and shared concepts.</p>
+            </div>
+            <span class="result-icon">⇄</span>
+          </div>
+          <div id="shared" class="shared-concepts"></div>
+          <pre id="cmpOut" class="out comparison-output">Your paper comparison will appear here.</pre>
+        </div>
+      </section>
+      <!-- HISTORY -->
+<section class="tab-pane fade" id="t-history">
+  <div class="section-heading">
+    <div>
+      <h3>Research history</h3>
+      <p>Review your previous AI research activities.</p>
+    </div>
+    <span class="section-symbol">05</span>
+  </div>
+
+  <div class="panel">
+    <div class="panel-heading">
+      <div>
+        <h4>Previous activities</h4>
+        <p>Your questions, summaries, and paper comparisons.</p>
+      </div>
+      <button id="refreshHistory" class="btn btn-outline-primary" type="button">
+        ↻ Refresh
+      </button>
+    </div>
+<div class="history-controls">
+  <input
+    type="text"
+    id="historySearch"
+    class="form-control"
+    placeholder="Search your research history..."
+  >
+
+  <select id="historyFilter" class="form-select">
+    <option value="all">All activities</option>
+    <option value="chat">AI Questions</option>
+    <option value="summary">Summaries</option>
+    <option value="comparison">Comparisons</option>
+  </select>
+</div>
+    <div id="historyList">
+      <p>Loading your research history...</p>
+    </div>
+  </div>
+</section>
+    </div>
+
+    <footer class="page-footer">
+      <span>PaperGraph <span class="footer-separator">/</span> Research Studio</span>
+      <span>Explore ideas. Connect knowledge.</span>
+    </footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
