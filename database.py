@@ -3,7 +3,8 @@ import os
 import sqlite3
 from flask import g
 
-
+import socket
+from urllib.parse import urlparse
 class PostgresConnection:
     """Compatibility wrapper for existing SQLite-style queries."""
 
@@ -37,6 +38,25 @@ def get_db(app=None):
         if database_url:
             import psycopg
             from psycopg.rows import dict_row
+            parsed = urlparse(database_url)
+            host = parsed.hostname
+            port = parsed.port or 5432
+
+            print("DB diagnostic host:", host, "port:", port, flush=True)
+
+            try:
+                test_socket = socket.create_connection(
+                    (host, port), timeout=8
+                )
+                test_socket.close()
+                print("DB TCP diagnostic: SUCCESS", flush=True)
+            except Exception as exc:
+                print(
+                    "DB TCP diagnostic FAILED:",
+                    type(exc).__name__,
+                    str(exc),
+                    flush=True
+                )
 
             connection = psycopg.connect(
                 database_url,
