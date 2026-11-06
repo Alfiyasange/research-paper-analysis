@@ -366,7 +366,6 @@ def graph(user_id, limit=400):
         })
 
     return list(nodes.values()) + edges
-
 def papers(user_id):
     db = database.get_db()
 
@@ -385,29 +384,3 @@ def papers(user_id):
     ).fetchall()
 
     return [dict(row) for row in rows]
-    from flask import current_app
-    import sqlite3
-    import os
-
-    db_path = os.path.join(
-        current_app.instance_path,
-        "papergraph.db"
-    )
-
-    connection = sqlite3.connect(db_path)
-    connection.row_factory = sqlite3.Row
-
-    rows = connection.execute(
-        """
-        SELECT id, title, filename, uploaded_at
-        FROM papers
-        WHERE user_id = ?
-        ORDER BY uploaded_at DESC
-        """,
-        (user_id,)
-    ).fetchall()
-
-    connection.close()
-
-    return [dict(row) for row in rows]
-    return [dict(r) for r in driver.execute_query("MATCH (p:Paper) RETURN p.id AS id, p.title AS title ORDER BY title").records]
