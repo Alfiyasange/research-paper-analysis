@@ -81,7 +81,7 @@ def pdf_chunks(path, size=900, overlap=150):
             if len(t[i:i + size]) > 80: chunks.append((pno, t[i:i + size]))
     first = chunks[0][1] if chunks else ""
     return (title or first[:80]), chunks
-    
+
 def extract_concepts(text):
     out = llm(
         "Return ONLY a JSON list of 8-12 short, lowercase technical concepts "
@@ -107,13 +107,17 @@ def ingest(path, name, user_id):
     import uuid
 
     pid = str(uuid.uuid4())
+    print("[INGEST] Starting PDF extraction", flush=True)
 
     title, chunks = pdf_chunks(path)
+    print(f"[INGEST] PDF extracted: {len(chunks)} chunks", flush=True)
+    print("[INGEST] Starting Gemini concept extraction", flush=True)
 
     concepts = extract_concepts(
         " ".join(c for _, c in chunks[:4])
     )
-
+    print(f"[INGEST] Concepts extracted: {len(concepts)}", flush=True)
+    print("[INGEST] Starting embedding generation", flush=True)
     driver.execute_query(
         "MERGE (p:Paper {id:$id}) "
         "SET p.title=$t, p.file=$f, p.user_id=$uid",
@@ -124,6 +128,8 @@ def ingest(path, name, user_id):
     )
 
     for n, (page, text) in enumerate(chunks):
+        if n == 0 or (n + 1) % 10 == 0:
+            print(f"[INGEST] Processing chunk {n + 1}/{len(chunks)}", flush=True)
         driver.execute_query(
             "MATCH (p:Paper {id:$pid, user_id:$uid}) "
             "MERGE (c:Chunk {id:$cid}) "
@@ -137,6 +143,9 @@ def ingest(path, name, user_id):
             page=page,
             emb=get_embedder().embed_query(text)
         )
+
+        print("[INGEST] All embeddings stored", flush=True)
+
 
     for c in concepts:
         driver.execute_query(
@@ -158,6 +167,7 @@ def ingest(path, name, user_id):
         "concepts": concepts,
         "chunks": len(chunks)
     }
+
 def fmt(rec):
     from neo4j_graphrag.types import RetrieverResultItem
 
