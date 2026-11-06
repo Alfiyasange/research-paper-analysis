@@ -4,10 +4,6 @@ import time
 from google.genai import errors
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
-from neo4j_graphrag.embeddings.sentence_transformers import SentenceTransformerEmbeddings
-from neo4j_graphrag.retrievers import VectorCypherRetriever
-from neo4j_graphrag.indexes import create_vector_index
-from neo4j_graphrag.types import RetrieverResultItem
 load_dotenv()
 E = os.getenv
 driver = GraphDatabase.driver(E("NEO4J_URI"), auth=(E("NEO4J_USER"), E("NEO4J_PASSWORD")))
@@ -17,6 +13,7 @@ _embedder = None
 def get_embedder():
     global _embedder
     if _embedder is None:
+        from neo4j_graphrag.embeddings.sentence_transformers import SentenceTransformerEmbeddings
         _embedder = SentenceTransformerEmbeddings(
             E("EMBED_MODEL", "all-MiniLM-L6-v2")
         )
@@ -25,12 +22,18 @@ DIM = 384  # all-MiniLM-L6-v2
 IDX = "chunk_index"
 
 def setup():
+    from neo4j_graphrag.indexes import create_vector_index
+
     driver.execute_query("CREATE CONSTRAINT paper_id IF NOT EXISTS FOR (p:Paper) REQUIRE p.id IS UNIQUE")
     driver.execute_query("CREATE CONSTRAINT concept_name IF NOT EXISTS FOR (c:Concept) REQUIRE c.name IS UNIQUE")
-    create_vector_index(driver, IDX, label="Chunk", embedding_property="embedding",
-                        dimensions=DIM, similarity_fn="cosine")
-                        # Initialize database indexes before creating the retriever
-
+    create_vector_index(
+        driver,
+        IDX,
+        label="Chunk",
+        embedding_property="embedding",
+        dimensions=DIM,
+        similarity_fn="cosine"
+    )
 
 # ---------- LLM (Google Gemini API) ----------
 
@@ -155,12 +158,15 @@ def ingest(path, name, user_id):
         "concepts": concepts,
         "chunks": len(chunks)
     }
-
 def fmt(rec):
+    from neo4j_graphrag.types import RetrieverResultItem
+
     return RetrieverResultItem(
         content=rec["text"],
         metadata=dict(rec)
     )
+
+
 RQ = """
 MATCH (c:Chunk)
 MATCH (p:Paper)-[:HAS_CHUNK]->(c)
@@ -176,16 +182,28 @@ RETURN
 """
 
 
-retriever = VectorCypherRetriever(
-    driver,
-    IDX,
-    RQ,
-   embedder=get_embedder(),
-    result_formatter=fmt
-)
+_retriever = None
+
+def get_retriever():
+    global _retriever
+
+    if _retriever is None:
+        from neo4j_graphrag.retrievers import VectorCypherRetriever
+
+        _retriever = VectorCypherRetriever(
+            driver,
+            IDX,
+            RQ,
+            embedder=get_embedder(),
+            result_formatter=fmt
+        )
+
+    return _retriever
 
 
 def retrieve(q, user_id, ids=(), k=6):
+    retriever = get_retriever()
+
     res = retriever.search(
         query_text=q,
         top_k=k * 4 if ids else k,
@@ -196,6 +214,8 @@ def retrieve(q, user_id, ids=(), k=6):
     )
 
     return [dict(i.metadata) for i in res.items][:k]
+
+
 def ctx(rows):
     return "\n\n".join(f"[{r['paper']}, p.{r['page']}] (concepts: {', '.join(r['concepts'])})\n{r['text']}" for r in rows)
 
