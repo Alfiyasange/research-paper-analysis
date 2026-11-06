@@ -7,16 +7,34 @@ from neo4j import GraphDatabase
 load_dotenv()
 E = os.getenv
 driver = GraphDatabase.driver(E("NEO4J_URI"), auth=(E("NEO4J_USER"), E("NEO4J_PASSWORD")))
-
 _embedder = None
+
+
+class FastEmbedAdapter:
+    def __init__(self):
+        from fastembed import TextEmbedding
+
+        self.model = TextEmbedding(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+
+    def embed_query(self, text):
+        vector = next(
+            self.model.embed(
+                [text],
+                batch_size=1,
+                parallel=None
+            )
+        )
+        return vector.tolist()
+
 
 def get_embedder():
     global _embedder
+
     if _embedder is None:
-        from neo4j_graphrag.embeddings.sentence_transformers import SentenceTransformerEmbeddings
-        _embedder = SentenceTransformerEmbeddings(
-            E("EMBED_MODEL", "all-MiniLM-L6-v2")
-        )
+        _embedder = FastEmbedAdapter()
+
     return _embedder
 DIM = 384  # all-MiniLM-L6-v2
 IDX = "chunk_index"
