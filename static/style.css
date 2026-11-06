@@ -1817,3 +1817,357 @@ html[data-theme="dark"] .graph-details {
 .history-item small {
     color: var(--text-muted, #777);
 }
+
+
+/* ==========================================
+   PAPERGRAPH - GLOBAL DARK MODE
+   Applies across every application section
+========================================== */
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --page: #15171b;
+    --surface: #202329;
+    --text: #f1f3f5;
+    --muted: #b0b7c3;
+    --border: #383d46;
+    --nav-bg: #1b1e24;
+    --input-bg: #252932;
+    --accent: #91a7ff;
+}
+
+/* Main application */
+html[data-theme="dark"] body,
+html[data-theme="dark"] .app-shell,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .main-content,
+html[data-theme="dark"] .tab-content,
+html[data-theme="dark"] .tab-pane {
+    background-color: var(--page);
+    color: var(--text);
+}
+
+/* All cards and panels */
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .card-body,
+html[data-theme="dark"] .panel-body,
+html[data-theme="dark"] .library-panel,
+html[data-theme="dark"] .summary-panel,
+html[data-theme="dark"] .assistant-panel,
+html[data-theme="dark"] .field-card,
+html[data-theme="dark"] .graph-details,
+html[data-theme="dark"] .graph-stat,
+html[data-theme="dark"] .sidebar-note,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .dropdown-menu {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Text throughout all sections */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] p,
+html[data-theme="dark"] label,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] span,
+html[data-theme="dark"] li {
+    color: inherit;
+}
+
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-body {
+    color: var(--text) !important;
+}
+
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .section-heading p,
+html[data-theme="dark"] .panel-heading p,
+html[data-theme="dark"] .composer-note {
+    color: var(--muted) !important;
+}
+
+/* Inputs, dropdowns and text areas */
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select {
+    background-color: var(--input-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] option {
+    background-color: var(--surface);
+    color: var(--text);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: var(--muted);
+}
+
+/* Output and response areas */
+html[data-theme="dark"] .out,
+html[data-theme="dark"] .summary-output,
+html[data-theme="dark"] .comparison-output,
+html[data-theme="dark"] .chat-window,
+html[data-theme="dark"] .history-controls,
+html[data-theme="dark"] .empty-state {
+    background-color: var(--input-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Lists and tables */
+html[data-theme="dark"] .list-group,
+html[data-theme="dark"] .list-group-item,
+html[data-theme="dark"] table,
+html[data-theme="dark"] th,
+html[data-theme="dark"] td {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Navigation and sidebar */
+html[data-theme="dark"] .sidebar {
+    color: var(--text);
+}
+
+html[data-theme="dark"] .sidebar .nav-link {
+    color: var(--text);
+}
+
+html[data-theme="dark"] .sidebar .nav-link:hover,
+html[data-theme="dark"] .sidebar .nav-link.active {
+    background-color: #293447;
+    color: #ffffff;
+}
+
+/* Graph workspace */
+html[data-theme="dark"] .graph-canvas {
+    background-color: var(--surface);
+    border-color: var(--border);
+}
+
+html[data-theme="dark"] .graph-details {
+    color: var(--text);
+}
+
+/* Borders and separators */
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .border,
+html[data-theme="dark"] .border-top,
+html[data-theme="dark"] .border-bottom {
+    border-color: var(--border) !important;
+}
+
+/* Theme toggle */
+html[data-theme="dark"] .theme-toggle {
+    background-color: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+/* Modals and dropdowns */
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer,
+html[data-theme="dark"] .dropdown-item {
+    background-color: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+/* Smooth theme transition */
+body,
+.panel,
+.card,
+.sidebar,
+.form-control,
+.form-select,
+.out {
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Fix dynamically generated history cards */
+html[data-theme="dark"] .history-item {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+}
+
+html[data-theme="dark"] .history-item h5,
+html[data-theme="dark"] .history-item strong,
+html[data-theme="dark"] .history-item p,
+html[data-theme="dark"] .history-item small {
+    color: var(--text) !important;
+}
+
+html[data-theme="dark"] .history-item small,
+html[data-theme="dark"] .history-item h5 {
+    color: var(--muted) !important;
+}
+
+/* Ensure history content remains readable */
+html[data-theme="dark"] #historyList {
+    color: var(--text);
+}
+
+/* ==========================================
+   AI ASSISTANT - COMPLETE DARK MODE
+========================================== */
+
+/* Answer mode and research scope section */
+html[data-theme="dark"] .assistant-controls {
+    background: #202329 !important;
+    color: #f1f3f5 !important;
+    border-color: #383d46 !important;
+}
+
+/* Labels */
+html[data-theme="dark"] .assistant-controls label {
+    color: #c4cbd5 !important;
+}
+
+/* Dropdowns */
+html[data-theme="dark"] #mode,
+html[data-theme="dark"] #scope {
+    background-color: #292e38 !important;
+    color: #f1f3f5 !important;
+    border-color: #454c58 !important;
+}
+
+/* Chat area */
+html[data-theme="dark"] #chat,
+html[data-theme="dark"] .chat-window {
+    background-color: #252932 !important;
+    color: #f1f3f5 !important;
+}
+
+/* Welcome content */
+html[data-theme="dark"] .chat-welcome,
+html[data-theme="dark"] .chat-welcome h4,
+html[data-theme="dark"] .chat-welcome p {
+    color: #f1f3f5 !important;
+}
+
+/* Suggestion buttons */
+html[data-theme="dark"] .suggestion-chips span {
+    background-color: #343b48 !important;
+    color: #e5eaf2 !important;
+    border: 1px solid #454c58 !important;
+}
+
+/* Question input */
+html[data-theme="dark"] .question-composer input {
+    background-color: #292e38 !important;
+    color: #ffffff !important;
+    border-color: #454c58 !important;
+}
+
+/* Chat messages */
+html[data-theme="dark"] .msg {
+    background-color: #303642;
+    color: #f1f3f5;
+    border-color: #454c58;
+}
+
+/* Assistant footer text */
+html[data-theme="dark"] .composer-note {
+    color: #aeb8c6 !important;
+}
+
+
+/* ==========================================
+   DARK MODE - PDF UPLOAD SECTION
+========================================== */
+
+html[data-theme="dark"] .upload-picker {
+    background: #252a34 !important;
+    color: #f1f3f5 !important;
+    border: 1px solid #454c58 !important;
+}
+
+html[data-theme="dark"] .upload-picker span {
+    color: #f1f3f5 !important;
+}
+
+html[data-theme="dark"] .upload-picker .picker-label {
+    color: #f1f3f5 !important;
+}
+
+html[data-theme="dark"] .upload-button {
+    background: #293447 !important;
+    color: #ffffff !important;
+    border-color: #454c58 !important;
+}
+
+html[data-theme="dark"] .upload-button:hover {
+    background: #35445c !important;
+}
+
+/* File selection focus */
+html[data-theme="dark"] .upload-picker:focus-within {
+    outline: 2px solid #b5f36b;
+    outline-offset: 2px;
+}
+
+/* GLOBAL DARK MODE - SECTION BADGES */
+
+/* Section numbers: 01, 02, 03, 04, 05 */
+html[data-theme="dark"] .section-symbol {
+    background: #293447 !important;
+    color: #b5f36b !important;
+    border: 1px solid #414c5e !important;
+}
+
+/* Labels: PDF LIBRARY, AI ASSISTANT, etc. */
+html[data-theme="dark"] .soft-tag {
+    background: #293447 !important;
+    color: #dce7f5 !important;
+    border: 1px solid #414c5e !important;
+}
+
+/* Keep badge text readable */
+html[data-theme="dark"] .section-symbol,
+html[data-theme="dark"] .soft-tag {
+    opacity: 1 !important;
+}
+
+/* Paper summary - dark mode */
+html[data-theme="dark"] .summary-icon {
+    background: #293447 !important;
+    color: #b5f36b !important;
+    border: 1px solid #414c5e !important;
+}
+
+/* Summary text area */
+html[data-theme="dark"] #summary.summary-output {
+    background: #252932 !important;
+    color: #f1f3f5 !important;
+    border: 1px solid #383d46 !important;
+}
+
+/* Summary scrollbar */
+html[data-theme="dark"] #summary.summary-output {
+    scrollbar-color: #626b79 #252932;
+}
+
+/* Comparison Results icon - Dark Mode */
+html[data-theme="dark"] .result-icon {
+    background: #293447 !important;
+    color: #b5f36b !important;
+    border: 1px solid #414c5e !important;
+    opacity: 1 !important;
+}

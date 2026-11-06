@@ -2,19 +2,21 @@
 import os
 from flask import Flask, request, jsonify, render_template, session, redirect
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 import core
 import database
 import auth
 import uuid
 
+load_dotenv()
+
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    "papergraph-development-key-change-before-deployment"
-)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError("SECRET_KEY environment variable is required")
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
 # Initialize SQLite database
@@ -353,11 +355,16 @@ def history():
 
     return jsonify(all_history)
 # Research graph
+# Research graph
 @app.get("/api/graph")
 def graph():
-    return jsonify(core.graph())
+    if "user_id" not in session:
+        return jsonify({"error": "Please log in"}), 401
 
+    return jsonify(core.graph(session["user_id"]))
+
+# Initialize Neo4j for both local and cloud deployment
+core.setup()
 
 if __name__ == "__main__":
-    core.setup()
     app.run(debug=True, port=5000)

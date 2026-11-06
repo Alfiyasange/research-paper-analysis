@@ -43,3 +43,25 @@ desktop.ini
 # Research paper PDFs
 papers/
 papers/
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python virtual environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local database
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# User uploaded files
+uploads/
+
+# IDE files
+.vscode/

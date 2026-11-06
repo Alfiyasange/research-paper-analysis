@@ -1,5 +1,7 @@
 import os, re, json, hashlib, fitz, requests
 import database
+import time
+from google.genai import errors
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings.sentence_transformers import SentenceTransformerEmbeddings
@@ -19,6 +21,8 @@ def setup():
     driver.execute_query("CREATE CONSTRAINT concept_name IF NOT EXISTS FOR (c:Concept) REQUIRE c.name IS UNIQUE")
     create_vector_index(driver, IDX, label="Chunk", embedding_property="embedding",
                         dimensions=DIM, similarity_fn="cosine")
+                        # Initialize database indexes before creating the retriever
+setup()
 
 # ---------- LLM (Google Gemini API) ----------
 
@@ -27,24 +31,33 @@ from google.genai import types
 
 def llm(system, user):
     api_key = E("GEMINI_API_KEY")
+
     if not api_key:
         raise ValueError("GEMINI_API_KEY is missing from your .env file")
 
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
-        model=E("LLM_MODEL", "gemini-flash-lite-latest"),
-        contents=user,
-        config=types.GenerateContentConfig(
-            system_instruction=system,
-            temperature=0.2,
-        ),
-    )
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model=E("LLM_MODEL", "gemini-flash-lite-latest"),
+                contents=user,
+                config=types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.2,
+                ),
+            )
 
-    if not response.text:
-        raise RuntimeError("Gemini returned an empty response.")
+            if not response.text:
+                raise RuntimeError("Gemini returned an empty response.")
 
-    return response.text
+            return response.text
+
+        except errors.ServerError:
+            if attempt == 2:
+                raise
+
+            time.sleep(2 ** (attempt + 1))
 
 
 # ---------- PDF -> chunks (PyMuPDF) ----------
@@ -287,13 +300,43 @@ def compare(a, b, user_id, aspect="main methods and findings"):
             prompt
         )
     }
-def graph(limit=400):
-    recs = driver.execute_query("MATCH (p:Paper)-[:DISCUSSES]->(k:Concept) RETURN p.id AS pid, p.title AS pt, k.name AS k LIMIT $l", l=limit).records
+def graph(user_id, limit=400):
+    recs = driver.execute_query(
+        """
+        MATCH (p:Paper {user_id: $uid})-[:DISCUSSES]->(k:Concept)
+        RETURN p.id AS pid, p.title AS pt, k.name AS k
+        LIMIT $l
+        """,
+        uid=user_id,
+        l=limit
+    ).records
+
     nodes, edges = {}, []
+
     for r in recs:
-        nodes[r["pid"]] = {"data": {"id": r["pid"], "label": r["pt"][:40], "type": "paper"}}
-        nodes["c:" + r["k"]] = {"data": {"id": "c:" + r["k"], "label": r["k"], "type": "concept"}}
-        edges.append({"data": {"source": r["pid"], "target": "c:" + r["k"]}})
+        nodes[r["pid"]] = {
+            "data": {
+                "id": r["pid"],
+                "label": r["pt"][:40],
+                "type": "paper"
+            }
+        }
+
+        nodes["c:" + r["k"]] = {
+            "data": {
+                "id": "c:" + r["k"],
+                "label": r["k"],
+                "type": "concept"
+            }
+        }
+
+        edges.append({
+            "data": {
+                "source": r["pid"],
+                "target": "c:" + r["k"]
+            }
+        })
+
     return list(nodes.values()) + edges
 
 def papers(user_id):
