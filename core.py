@@ -135,7 +135,7 @@ def ingest(path, name, user_id):
             cid=f"{pid}-{n}",
             text=text,
             page=page,
-            emb=embedder.embed_query(text)
+            emb=get_embedder().embed_query(text)
         )
 
     for c in concepts:
@@ -384,3 +384,4 @@ def papers(user_id):
     ).fetchall()
 
     return [dict(row) for row in rows]
+
