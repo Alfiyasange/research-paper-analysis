@@ -12,7 +12,15 @@ load_dotenv()
 E = os.getenv
 driver = GraphDatabase.driver(E("NEO4J_URI"), auth=(E("NEO4J_USER"), E("NEO4J_PASSWORD")))
 
-embedder = SentenceTransformerEmbeddings(E("EMBED_MODEL", "all-MiniLM-L6-v2"))
+_embedder = None
+
+def get_embedder():
+    global _embedder
+    if _embedder is None:
+        _embedder = SentenceTransformerEmbeddings(
+            E("EMBED_MODEL", "all-MiniLM-L6-v2")
+        )
+    return _embedder
 DIM = 384  # all-MiniLM-L6-v2
 IDX = "chunk_index"
 
@@ -22,7 +30,7 @@ def setup():
     create_vector_index(driver, IDX, label="Chunk", embedding_property="embedding",
                         dimensions=DIM, similarity_fn="cosine")
                         # Initialize database indexes before creating the retriever
-setup()
+
 
 # ---------- LLM (Google Gemini API) ----------
 
@@ -172,7 +180,7 @@ retriever = VectorCypherRetriever(
     driver,
     IDX,
     RQ,
-    embedder=embedder,
+   embedder=get_embedder(),
     result_formatter=fmt
 )
 

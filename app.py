@@ -363,8 +363,6 @@ def graph():
 
     return jsonify(core.graph(session["user_id"]))
 
-# Initialize Neo4j for both local and cloud deployment
-core.setup()
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
